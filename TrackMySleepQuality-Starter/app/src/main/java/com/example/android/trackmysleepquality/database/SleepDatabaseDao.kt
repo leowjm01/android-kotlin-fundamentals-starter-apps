@@ -16,7 +16,66 @@
 
 package com.example.android.trackmysleepquality.database
 
-import androidx.room.Dao
+import androidx.lifecycle.LiveData
+import androidx.room.*
+
+// Instruction
+// 1. Insert new nights
+// 2. Update an existing night and end time and quality rating
+// 3. Get a specific night based on keys
+// 4. Get all night
+// 5. Get the most recent night
+// 6. Delete all entries in the database
 
 @Dao
-interface SleepDatabaseDao
+interface SleepDatabaseDao{
+
+    /*
+    *  1. Insert new night into daily_sleep_quality-table
+    *
+    * @param night new value to insert
+    * */
+    @Insert
+     fun insert(night: SleepNight)
+
+     /*
+     * 2. Update an existing with end time and quality rating
+     *
+     * @param night new value to update
+     * */
+    @Update
+    fun update(night: SleepNight)
+
+    /*
+    * 3. Get a specific night based on keys
+    *
+    * @param key to get specific nights
+    * */
+    @Query("Select * from daily_sleep_quality_table WHERE nightID = :key")
+    fun get(key: Long): SleepNight?
+
+    /*
+    * 4. Get all night
+    *
+    * */
+    @Query("Select * from daily_sleep_quality_table ORDER BY nightID DESC")
+    fun getGetAllNights(): LiveData<List<SleepNight>>
+
+    /*
+    * 5. Get the most recent night
+    *
+    * */
+    @Query("Select * from daily_sleep_quality_table ORDER BY nightID DESC Limit 1")
+    fun getTonight(): SleepNight?
+
+
+    //@Delete cannot help to delete all data in table, its base to delete 1 key of data in the table
+
+    /*
+    * 6. Delete all entries in the database
+    *
+    * */
+    @Query("DELETE FROM daily_sleep_quality_table")
+    fun clear()
+}
+
